@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
+    backgroundColor: '#000',
   },
   input: {
     flex: 1,
