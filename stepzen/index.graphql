@@ -4,6 +4,8 @@ schema
       "recommendations/index.graphql"
       "curl/index.graphql"
       "auth/index.graphql"
+      "search/index.graphql"
+      "track/index.graphql"
     ]
   ) {
   query: Query

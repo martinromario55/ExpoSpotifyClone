@@ -25,3 +25,20 @@ stepzen import \
             --query-name "getToken" \
             --query-type "TokenResponse" \
             --name "auth"
+
+stepzen import \
+      curl 'https://api.spotify.com/v1/search?q=nf&type=track' \
+        --header 'Authorization: Bearer BQDbW_PT3BUngHxWpPD3XocsEmSnTQBU1Obtkz3AE5i8xdFm_KMmrtUGOfr6U6tPovE5adwkhXuqFh8vEnELqFh9bLAIlnjnkAeiq6G-ImEu2tS9940' \
+        --query-name 'search' \
+        --name 'search' \
+        --prefix 'Search'
+
+
+stepzen import \
+        curl "https://api.spotify.com/v1/tracks/11dFghVXANMlKmJXsNCbNl" \
+        --header 'Authorization: Bearer BQB6UaulLvIo9nh1Wdf6PgixknTROMg4SipvPY0coAdTBcYdBIZePkY54jD3NHovmlkEJJwRFVMFDj38p6WRZbwWe0ezjLXlrMi9CigL1sGQWP1f7oE' \
+        --path-params "/v1/tracks/\$trackId" \
+        --query-name "getTrack" \
+        --query-type "TrackResponse" \
+        --name "track" \
+        --prefix "Track"
