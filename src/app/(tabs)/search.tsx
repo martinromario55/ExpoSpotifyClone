@@ -1,14 +1,57 @@
-import { FlatList, SafeAreaView, StyleSheet, TextInput } from 'react-native'
+import {
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  TextInput,
+} from 'react-native'
 
 import EditScreenInfo from '@/src/components/EditScreenInfo'
 import { Text, View } from '@/src/components/Themed'
-import { tracks } from '@/assets/data/tracks'
+// import { tracks } from '@/assets/data/tracks'
 import TrackListItem from '@/src/components/TrackListItem'
 import { FontAwesome } from '@expo/vector-icons'
 import { useState } from 'react'
+import { gql, useQuery } from '@apollo/client'
+
+const query = gql`
+  query MyQuery($q: String!) {
+    search(q: $q) {
+      tracks {
+        items {
+          id
+          name
+          preview_url
+          artists {
+            id
+            name
+          }
+          album {
+            id
+            name
+            images {
+              height
+              url
+              width
+            }
+          }
+        }
+      }
+    }
+  }
+`
 
 export default function TabTwoScreen() {
   const [search, setSearch] = useState('')
+
+  const { data, loading, error } = useQuery(query, {
+    variables: {
+      q: search,
+    },
+  })
+
+  const tracks = data?.search?.tracks?.items || []
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -18,12 +61,14 @@ export default function TabTwoScreen() {
           style={styles.input}
           placeholderTextColor={'gray'}
           value={search}
-          onChange={setSearch}
+          onChangeText={setSearch}
         />
         <Text style={{ color: 'gray' }} onPress={() => setSearch('')}>
           Cancel
         </Text>
       </View>
+      {loading && <ActivityIndicator />}
+      {error && <Text style={{ color: '#fff' }}>Failed to fetch tracks</Text>}
       <FlatList
         data={tracks}
         renderItem={({ item }) => <TrackListItem track={item} />}
