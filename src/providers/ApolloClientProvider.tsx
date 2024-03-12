@@ -2,10 +2,10 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 import { PropsWithChildren } from 'react'
 
 const client = new ApolloClient({
-  uri: 'https://chagallu.stepzen.net/api/oldfashioned-aardvark/__graphql',
+  uri: 'https://marvdasht.stepzen.net/api/idle-zebu/__graphql',
   headers: {
     Authorization:
-      'apikey chagallu::stepzen.net+1000::186c1b2cf5cff2214b43700408e5e419b5d01be431bd22094b8894c49b883d84',
+      'apikey marvdasht::stepzen.net+1000::469389fd8fe6ef7d7a69ad67b4cba23d0929145abb3e5ab9e7b4e0a3ed7d4cdf',
   },
   cache: new InMemoryCache(),
 })
