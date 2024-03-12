@@ -6,15 +6,56 @@ import { usePlayerContext } from '../providers/PlayerProvider'
 import { useEffect, useState } from 'react'
 import { AVPlaybackStatus, Audio } from 'expo-av'
 import { Sound } from 'expo-av/build/Audio'
+import { gql, useMutation, useQuery } from '@apollo/client'
+
+const insertFavouriteMutation = gql`
+  mutation MyMutation($userId: String!, $trackId: String!) {
+    insertFavourites(userid: $userId, trackid: $trackId) {
+      id
+      trackid
+      userid
+    }
+  }
+`
+
+const isFavouriteQuery = gql`
+  query MyQuery($trackId: String!, $userId: String!) {
+    favouritesByTrackidAndUserid(trackid: $trackId, userid: $userId) {
+      id
+      trackid
+      userid
+    }
+  }
+`
+
+const removeFavouriteMutation = gql`
+  mutation MyMutation($trackId: String!, $userId: String!) {
+    deleteFavourites(trackid: $trackId, userid: $userId) {
+      id
+    }
+  }
+`
 
 const Player = () => {
   const { track } = usePlayerContext()
   const [sound, setSound] = useState<Sound>()
   const [isPlaying, setIsPlaying] = useState(false)
 
+  const [insertFavourite] = useMutation(insertFavouriteMutation)
+  const [removeFavourite] = useMutation(removeFavouriteMutation)
+
+  const { data, refetch } = useQuery(isFavouriteQuery, {
+    variables: { userId: 'martin', trackId: track?.id },
+  })
+  const isLiked = data?.favouritesByTrackidAndUserid?.length > 0
+  // console.log('data', data)
+  // console.log('track', track)
+  // console.log('liked', isLiked)
+
   useEffect(() => {
     if (track) {
       playTrack()
+      refetch()
     }
   }, [track])
 
@@ -22,7 +63,7 @@ const Player = () => {
   useEffect(() => {
     return sound
       ? () => {
-          console.log('UnLoading Sound')
+          // console.log('UnLoading Sound')
           sound.unloadAsync()
         }
       : undefined
@@ -65,6 +106,25 @@ const Player = () => {
     }
   }
 
+  const onLike = async () => {
+    if (!track) {
+      console.log('No track')
+      return
+    }
+    if (isLiked) {
+      await removeFavourite({
+        variables: { trackId: track.id, userId: 'martin' },
+      })
+    } else {
+      await insertFavourite({
+        variables: { userId: 'martin', trackId: track.id },
+      })
+      // console.log('clicked')
+      // console.log('liked', isLiked)
+    }
+    refetch()
+  }
+
   if (!track) {
     return null
   }
@@ -79,7 +139,10 @@ const Player = () => {
           <Text style={styles.subtitle}>{track.artists[0]?.name}</Text>
         </View>
         <Ionicons
-          name={'heart-outline'}
+          onPress={() => {
+            onLike()
+          }}
+          name={isLiked ? 'heart' : 'heart-outline'}
           size={20}
           color={'white'}
           style={{ marginHorizontal: 10 }}

@@ -69,11 +69,15 @@ export default function TabTwoScreen() {
       </View>
       {loading && <ActivityIndicator />}
       {error && <Text style={{ color: '#fff' }}>Failed to fetch tracks</Text>}
-      <FlatList
-        data={tracks}
-        renderItem={({ item }) => <TrackListItem track={item} />}
-        showsVerticalScrollIndicator={false}
-      />
+      {tracks?.length > 0 ? (
+        <FlatList
+          data={tracks}
+          renderItem={({ item }) => <TrackListItem track={item} />}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <Text>List is empty</Text>
+      )}
     </SafeAreaView>
   )
 }
